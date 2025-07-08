@@ -8,7 +8,7 @@ spec:
   source:
     repoURL: 'https://github.com/dmarmijosa/Icecast.git' # ¡CAMBIA ESTO! La URL de tu repositorio Git
     targetRevision: main # La rama de tu repositorio (ej. 'main', 'master', 'dev')
-    path: icecast-k8s # La carpeta donde guardaste tus archivos .yaml de Icecast
+    path: k8s # La carpeta donde guardaste tus archivos .yaml de Icecast
   destination:
     server: 'https://kubernetes.default.svc' # Apunta al clúster local donde Argo CD está corriendo (el .76)
     namespace: icecast-ns # El namespace donde se desplegará Icecast (definido en 00-namespace.yaml)

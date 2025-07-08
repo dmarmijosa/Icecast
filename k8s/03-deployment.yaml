@@ -15,7 +15,20 @@ spec:
       labels:
         app: icecast
     spec:
-      # NO HAY initContainers AQUI (los habíamos quitado en la última iteración)
+      # --- INICIA NUEVA SECCIÓN: initContainers ---
+      # Este initContainer copiará el icecast.xml del ConfigMap a un volumen temporal escribible.
+      initContainers:
+        - name: copy-icecast-config
+          image: busybox:1.36 # Imagen ligera para copiar archivos
+          command: ["sh", "-c", "cp /tmp/icecast-config/icecast.xml /var/run/icecast/icecast.xml && chmod 666 /var/run/icecast/icecast.xml"] # Copia y asegura permisos
+          volumeMounts:
+            # Monta el ConfigMap como solo lectura en un directorio temporal
+            - name: icecast-config-volume
+              mountPath: /tmp/icecast-config
+            # Monta el volumen temporal escribible donde se copiará el archivo
+            - name: icecast-writable-config-volume
+              mountPath: /var/run/icecast # Monta el directorio donde Icecast buscará el archivo
+      # --- FIN NUEVA SECCIÓN ---
       containers:
         - name: icecast-container
           image: libretime/icecast:latest
@@ -38,22 +51,22 @@ spec:
                   name: icecast-secrets
                   key: ICECAST_ADMIN_PASSWORD
           volumeMounts:
-            # Montar el ConfigMap en la ruta donde la imagen espera el archivo de configuración
-            - name: icecast-config-volume
-              mountPath: /etc/icecast.xml # Ruta donde Icecast espera su config
-              subPath: icecast.xml        # Nombre del archivo dentro del ConfigMap
-              readOnly: true              # Es importante que sea read-only
+            # Monta el volumen temporal escribible donde está el icecast.xml copiado
+            - name: icecast-writable-config-volume
+              mountPath: /var/run/icecast # Monta el directorio donde Icecast buscará el archivo
             # Montar el volumen de logs en la ruta ESPERADA por Icecast
             - name: icecast-logs-storage
-              mountPath: /var/log/icecast # Ruta donde Icecast espera sus logs
-          # --- CAMBIO AQUÍ: Eliminamos 'command' y no usamos 'args' si queremos el CMD por defecto ---
-          # Si quieres usar el CMD por defecto de la imagen (icecast -c /etc/icecast.xml),
-          # simplemente ELIMINA la sección 'command' y 'args' completamente.
-          # La imagen se iniciará con su ENTRYPOINT y CMD predeterminados.
+              mountPath: /var/log/icecast # La ruta que viene en el XML por defecto
+      # --- CAMBIO AQUÍ: Usamos 'args' para pasar la ruta del config al ENTRYPOINT por defecto ---
+          args: ["-c", "/var/run/icecast/icecast.xml"] # Pasamos el path del config al ENTRYPOINT de la imagen
       volumes:
         - name: icecast-config-volume
           configMap:
             name: icecast-config
+        # --- NUEVA SECCIÓN: Volumen temporal escribible ---
+        - name: icecast-writable-config-volume
+          emptyDir: {} # Un volumen temporal que se crea con el pod
+        # --- FIN NUEVA SECCIÓN ---
         - name: icecast-logs-storage
           persistentVolumeClaim:
             claimName: icecast-logs-pvc

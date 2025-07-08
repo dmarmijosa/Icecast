@@ -7,7 +7,7 @@ data:
   icecast.xml: |
     <icecast>
         <location>Ciutadella de Menorca, Spain</location> # Ajustado a tu ubicación
-        <admin>dmarmijosa@example.com</admin> # Ajustado a tu email
+        <admin>dmarmijosa@gmail.com</admin> # Ajustado a tu email
 
         <limits>
             <clients>100</clients>

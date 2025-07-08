@@ -47,7 +47,7 @@ spec:
               mountPath: /usr/local/icecast/logs # Asegúrate de que esta es la ruta interna de los logs
           # Comando para iniciar Icecast, apuntando al archivo de configuración
           # Esto evita que el entrypoint de la imagen intente modificar /etc/icecast.xml
-          command: ["icecast2", "-c", "/etc/icecast2/icecast.xml"]
+          command: ["/usr/bin/icecast2", "-c", "/etc/icecast2/icecast.xml"]
       volumes:
         - name: icecast-config-volume
           configMap:

@@ -33,8 +33,8 @@ data:
             <paths>
                 <basedir>/usr/share/icecast2</basedir>
                 <logdir>/usr/local/icecast/logs</logdir> # RUTA DE LOGS CORREGIDA
-                <webroot>/usr/share/icecast2/web</webroot>
-                <adminroot>/usr/share/icecast2/admin</adminroot>
+                <webroot>/usr/share/icecast/web</webroot>
+                <adminroot>/usr/share/icecast/web</adminroot>
             </paths>
         </files>
 

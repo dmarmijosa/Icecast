@@ -13,7 +13,7 @@ data:
             <queue-size>524288</queue-size>
             <client-timeout>30</client-timeout>
             <header-timeout>15</header-timeout>
-            <timelimit>36000</timelabel>
+            <timelimit>36000</timelimit>
             <burst-size>65536</burst-size>
         </limits>
 

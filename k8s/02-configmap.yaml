@@ -21,11 +21,11 @@ data:
         </limits>
 
         <authentication>
-            <source-password>${ICECAST_SOURCE_PASSWORD}</source-password> # Ajustado para usar Secret
-            <relay-password>${ICECAST_RELAY_PASSWORD}</relay-password>   # Ajustado para usar Secret
+            <source-password>hackme</source-password> # Ajustado para usar Secret
+            <relay-password>hackme</relay-password>   # Ajustado para usar Secret
 
             <admin-user>admin</admin-user>
-            <admin-password>12251619</admin-password>   # Ajustado para usar Secret
+            <admin-password>hackme</admin-password>   # Ajustado para usar Secret
         </authentication>
 
         <hostname>icecast.dmarmijosa.com</hostname> # Ajustado a tu dominio

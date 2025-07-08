@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: icecast-logs-pvc
+  namespace: icecast-ns
+spec:
+  accessModes:
+    - ReadWriteOnce # Generalmente suficiente para un solo pod
+  resources:
+    requests:
+      storage: 1Gi # 1 Gigabyte para logs, ajusta según necesidad

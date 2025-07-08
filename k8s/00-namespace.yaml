@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: icecast
+  labels:
+    name: icecast
+    app: icecast
+spec: {}

@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: icecast-service
+  namespace: icecast-ns
+spec:
+  type: ClusterIP # Tipo ClusterIP porque el Ingress lo expondrá
+  selector:
+    app: icecast # Apunta a los pods con esta etiqueta
+  ports:
+    - name: http-icecast # Un nombre para el puerto
+      port: 8000         # El puerto que el servicio de Kubernetes expone
+      targetPort: 8000   # El puerto del contenedor de Icecast

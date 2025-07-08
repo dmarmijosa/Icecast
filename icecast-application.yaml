@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: icecast-app # Un nombre único para tu aplicación en Argo CD
+  namespace: argocd # El namespace donde está instalado Argo CD
+spec:
+  project: default # El proyecto de Argo CD (normalmente 'default')
+  source:
+    repoURL: 'https://github.com/tu-usuario/tu-repo-git.git' # ¡CAMBIA ESTO! La URL de tu repositorio Git
+    targetRevision: main # La rama de tu repositorio (ej. 'main', 'master', 'dev')
+    path: icecast-k8s # La carpeta donde guardaste tus archivos .yaml de Icecast
+  destination:
+    server: 'https://kubernetes.default.svc' # Apunta al clúster local donde Argo CD está corriendo (el .76)
+    namespace: icecast-ns # El namespace donde se desplegará Icecast (definido en 00-namespace.yaml)
+  syncPolicy:
+    automated: # Permite que Argo CD sincronice automáticamente los cambios
+      prune: true # Borra recursos que ya no estén en Git
+      selfHeal: true # Repara el estado del clúster si se desvía de Git
+    syncOptions:
+      - CreateNamespace=true # Argo CD creará el namespace si no existe

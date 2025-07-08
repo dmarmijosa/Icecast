@@ -1,0 +1,30 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: icecast-ingress
+  namespace: icecast-ns
+  annotations:
+    # Anotaciones comunes para Nginx Ingress Controller
+    nginx.ingress.kubernetes.io/proxy-body-size: "20m" # Si esperas streams grandes
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTP" # Icecast usa HTTP
+    # Si quieres SSL/HTTPS (¡MUY RECOMENDADO para un dominio público!)
+    # Esto asume que tienes cert-manager instalado en MicroK8s
+    # cert-manager.io/cluster-issuer: "letsencrypt-prod" # O "letsencrypt-staging" para pruebas
+spec:
+  ingressClassName: public # O el nombre de tu IngressClass si tienes una personalizada
+  rules:
+    - host: "streaming.dmarmijosa.com" # Tu dominio
+      http:
+        paths:
+          - path: / # Todas las peticiones para este dominio
+            pathType: Prefix
+            backend:
+              service:
+                name: icecast-service # Apunta a tu servicio de Icecast
+                port:
+                  number: 8000 # Al puerto de tu servicio Icecast
+  # Sección TLS para HTTPS (descomenta y configura si usas SSL)
+  # tls:
+  #   - hosts:
+  #       - "streaming.dmarmijosa.com"
+  #     secretName: icecast-tls-secret # El Secret donde se guardará el certificado

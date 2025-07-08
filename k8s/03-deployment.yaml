@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: icecast-deployment
+  namespace: icecast-ns
+  labels:
+    app: icecast
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: icecast
+  template:
+    metadata:
+      labels:
+        app: icecast
+    spec:
+      containers:
+        - name: icecast-container
+          image: libretime/icecast:latest # Usamos la imagen oficial
+          ports:
+            - containerPort: 8000 # Icecast escucha en el puerto 8000 por defecto
+          env:
+            # Inyectamos las contraseñas desde el Secret
+            - name: ICECAST_SOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: icecast-secrets
+                  key: ICECAST_SOURCE_PASSWORD
+            - name: ICECAST_RELAY_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: icecast-secrets
+                  key: ICECAST_RELAY_PASSWORD
+            - name: ICECAST_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: icecast-secrets
+                  key: ICECAST_ADMIN_PASSWORD
+          volumeMounts:
+            # Monta el ConfigMap como el archivo icecast.xml
+            - name: icecast-config-volume
+              mountPath: /etc/icecast.xml # Ruta donde Icecast espera su config
+              subPath: icecast.xml        # Nombre del archivo dentro del ConfigMap
+            # Opcional: para logs persistentes
+            - name: icecast-logs-storage
+              mountPath: /var/log/icecast
+      volumes:
+        - name: icecast-config-volume
+          configMap:
+            name: icecast-config
+        # Opcional: para logs persistentes
+        - name: icecast-logs-storage
+          persistentVolumeClaim:
+            claimName: icecast-logs-pvc

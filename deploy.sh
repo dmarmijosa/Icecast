@@ -56,13 +56,13 @@ fi
 git push || print_error "Falló el 'git push'. Verifica tu conexión y permisos."
 print_success "Cambios subidos a Git correctamente."
 
-# --- Fase 2: Docker ---
-DOCKER_IMAGE="$DOCKER_USER/$APP_NAME:latest"
-print_step "Tarea 2: Construyendo y subiendo imagen Docker multi-plataforma: $DOCKER_IMAGE"
-if ! docker buildx build --platform linux/amd64,linux/arm64 -t "$DOCKER_IMAGE" --push .; then
-    print_error "La construcción o subida de la imagen de Docker falló. Intenta añadir --no-cache si el problema persiste."
-fi
-print_success "Imagen Docker subida a Docker Hub correctamente."
+# --- Fase 2: Docker (Comentada para usar imagen existente) ---
+# DOCKER_IMAGE="$DOCKER_USER/$APP_NAME:latest"
+# print_step "Tarea 2: Construyendo y subiendo imagen Docker multi-plataforma: $DOCKER_IMAGE"
+# if ! docker buildx build --platform linux/amd64,linux/arm64 -t "$DOCKER_IMAGE" --push .; then
+#     print_error "La construcción o subida de la imagen de Docker falló. Intenta añadir --no-cache si el problema persiste."
+# fi
+print_success "Saltando construcción y subida de imagen Docker. Usando imagen preexistente."
 
 # --- Fase 3: Argo CD ---
 if [[ "$IS_NEW_DEPLOYMENT" =~ ^[sS]([iI])?$ ]]; then

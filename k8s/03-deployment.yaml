@@ -15,6 +15,7 @@ spec:
       labels:
         app: icecast
     spec:
+      # NO HAY initContainers AQUI (los habíamos quitado en la última iteración)
       containers:
         - name: icecast-container
           image: libretime/icecast:latest
@@ -37,17 +38,18 @@ spec:
                   name: icecast-secrets
                   key: ICECAST_ADMIN_PASSWORD
           volumeMounts:
-            # Montar el ConfigMap en una ruta que Icecast pueda leer directamente
+            # Montar el ConfigMap en la ruta donde la imagen espera el archivo de configuración
             - name: icecast-config-volume
-              mountPath: /etc/icecast2/icecast.xml # Ruta donde Icecast espera su config
-              subPath: icecast.xml # Nombre del archivo dentro del ConfigMap
-              readOnly: true # Es importante que sea read-only si Icecast no necesita modificarlo
+              mountPath: /etc/icecast.xml # Ruta donde Icecast espera su config
+              subPath: icecast.xml        # Nombre del archivo dentro del ConfigMap
+              readOnly: true              # Es importante que sea read-only
             # Montar el volumen de logs en la ruta ESPERADA por Icecast
             - name: icecast-logs-storage
-              mountPath: /usr/local/icecast/logs # Asegúrate de que esta es la ruta interna de los logs
-          # Comando para iniciar Icecast, apuntando al archivo de configuración
-          # Esto evita que el entrypoint de la imagen intente modificar /etc/icecast.xml
-          command: ["/usr/bin/icecast2", "-c", "/etc/icecast2/icecast.xml"]
+              mountPath: /usr/local/icecast/logs # Ruta donde Icecast espera sus logs
+          # --- CAMBIO AQUÍ: Eliminamos 'command' y no usamos 'args' si queremos el CMD por defecto ---
+          # Si quieres usar el CMD por defecto de la imagen (icecast -c /etc/icecast.xml),
+          # simplemente ELIMINA la sección 'command' y 'args' completamente.
+          # La imagen se iniciará con su ENTRYPOINT y CMD predeterminados.
       volumes:
         - name: icecast-config-volume
           configMap:

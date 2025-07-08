@@ -6,7 +6,7 @@ metadata:
 spec:
   project: default # El proyecto de Argo CD (normalmente 'default')
   source:
-    repoURL: 'https://github.com/tu-usuario/tu-repo-git.git' # ¡CAMBIA ESTO! La URL de tu repositorio Git
+    repoURL: 'https://github.com/dmarmijosa/Icecast.git ' # ¡CAMBIA ESTO! La URL de tu repositorio Git
     targetRevision: main # La rama de tu repositorio (ej. 'main', 'master', 'dev')
     path: icecast-k8s # La carpeta donde guardaste tus archivos .yaml de Icecast
   destination:

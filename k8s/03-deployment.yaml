@@ -45,7 +45,7 @@ spec:
               readOnly: true              # Es importante que sea read-only
             # Montar el volumen de logs en la ruta ESPERADA por Icecast
             - name: icecast-logs-storage
-              mountPath: /usr/local/icecast/logs # Ruta donde Icecast espera sus logs
+              mountPath: /var/log/icecast # Ruta donde Icecast espera sus logs
           # --- CAMBIO AQUÍ: Eliminamos 'command' y no usamos 'args' si queremos el CMD por defecto ---
           # Si quieres usar el CMD por defecto de la imagen (icecast -c /etc/icecast.xml),
           # simplemente ELIMINA la sección 'command' y 'args' completamente.

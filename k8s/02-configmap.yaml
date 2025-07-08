@@ -5,44 +5,56 @@ metadata:
   namespace: icecast-ns
 data:
   icecast.xml: |
-    <?xml version="1.0"?>
     <icecast>
+        <location>Ciutadella de Menorca, Spain</location> # Ajustado a tu ubicación
+        <admin>dmarmijosa@example.com</admin> # Ajustado a tu email
+
         <limits>
             <clients>100</clients>
             <sources>2</sources>
             <queue-size>524288</queue-size>
             <client-timeout>30</client-timeout>
             <header-timeout>15</header-timeout>
-            <timelimit>36000</timelimit> # Asegúrate que esto esté corregido
-            <burst-size>65536</burst-size>
+            <source-timeout>10</source-timeout>
+            <burst-on-connect>1</burst-on-connect>
+            <burst-size>65535</burst-size>
         </limits>
 
         <authentication>
-            <source-password>${ICECAST_SOURCE_PASSWORD}</source-password>
-            <relay-password>${ICECAST_RELAY_PASSWORD}</relay-password>
+            <source-password>${ICECAST_SOURCE_PASSWORD}</source-password> # Ajustado para usar Secret
+            <relay-password>${ICECAST_RELAY_PASSWORD}</relay-password>   # Ajustado para usar Secret
+
             <admin-user>admin</admin-user>
-            <admin-password>${ICECAST_ADMIN_PASSWORD}</admin-password>
+            <admin-password>${ICECAST_ADMIN_PASSWORD}</admin-password>   # Ajustado para usar Secret
         </authentication>
 
-        <hostname>icecast.dmarmijosa.com</hostname> # Lo cambiaremos después
+        <hostname>icecast.dmarmijosa.com</hostname> # Ajustado a tu dominio
+
         <listen-socket>
             <port>8000</port>
-        </listen-socket>
+            </listen-socket>
+        <http-headers>
+            <header name="Access-Control-Allow-Origin" value="*" />
+        </http-headers>
 
-        <files>
-            <paths>
-                <basedir>/usr/share/icecast2</basedir>
-                <logdir>/usr/local/icecast/logs</logdir> # RUTA DE LOGS CORREGIDA
-                <webroot>web</webroot>
-                <adminroot>web/admin</adminroot>
+
+        <fileserve>1</fileserve>
+
+        <paths>
+            <basedir>/usr/share/icecast</basedir>
+
+            <logdir>/var/log/icecast</logdir> # CRÍTICO: Ajustado a la ruta del XML por defecto
+            <webroot>/usr/share/icecast/web</webroot> # Ajustado a la ruta del XML por defecto
+            <adminroot>/usr/share/icecast/admin</adminroot> # Ajustado a la ruta del XML por defecto
+            <alias source="/" destination="/status.xsl"/> # Presente en el XML por defecto
             </paths>
-        </files>
+
+        <logging>
+            <accesslog>access.log</accesslog>
+            <errorlog>-</errorlog>
+            <loglevel>3</loglevel> <logsize>10000</logsize> </logging>
 
         <security>
             <chroot>0</chroot>
-        </security>
-        <log>
-            <level>warn</level>
-            <size>10000</size>
-        </log>
+            </security>
     </icecast>

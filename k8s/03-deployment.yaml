@@ -58,7 +58,7 @@ spec:
             - name: icecast-logs-storage
               mountPath: /var/log/icecast # La ruta que viene en el XML por defecto
       # --- CAMBIO AQUÍ: Usamos 'args' para pasar la ruta del config al ENTRYPOINT por defecto ---
-          args: ["-c", "/var/run/icecast/icecast.xml"] # Pasamos el path del config al ENTRYPOINT de la imagen
+          args: ["icecast", "-c", "/var/run/icecast/icecast.xml"] # Pasamos el path del config al ENTRYPOINT de la imagen
       volumes:
         - name: icecast-config-volume
           configMap:

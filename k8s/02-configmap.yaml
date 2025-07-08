@@ -25,7 +25,7 @@ data:
             <relay-password>${ICECAST_RELAY_PASSWORD}</relay-password>   # Ajustado para usar Secret
 
             <admin-user>admin</admin-user>
-            <admin-password>${ICECAST_ADMIN_PASSWORD}</admin-password>   # Ajustado para usar Secret
+            <admin-password>12251619</admin-password>   # Ajustado para usar Secret
         </authentication>
 
         <hostname>icecast.dmarmijosa.com</hostname> # Ajustado a tu dominio

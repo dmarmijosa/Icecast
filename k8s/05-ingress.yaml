@@ -4,27 +4,27 @@ metadata:
   name: icecast-ingress
   namespace: icecast-ns
   annotations:
-    # Anotaciones comunes para Nginx Ingress Controller
-    nginx.ingress.kubernetes.io/proxy-body-size: "20m" # Si esperas streams grandes
+    # Anotación para que cert-manager emita el certificado
+    cert-manager.io/cluster-issuer: "letsencrypt-prod" # Asegúrate que este nombre es correcto
+    nginx.ingress.kubernetes.io/proxy-body-size: "20m"
     nginx.ingress.kubernetes.io/backend-protocol: "HTTP" # Icecast usa HTTP
-    # Si quieres SSL/HTTPS (¡MUY RECOMENDADO para un dominio público!)
-    # Esto asume que tienes cert-manager instalado en MicroK8s
-    # cert-manager.io/cluster-issuer: "letsencrypt-prod" # O "letsencrypt-staging" para pruebas
+
+    # NUEVO: Anotación para forzar reescritura de la URL si el path "/" no funciona
+    nginx.ingress.kubernetes.io/rewrite-target: /$1
 spec:
-  ingressClassName: public # O el nombre de tu IngressClass si tienes una personalizada
+  ingressClassName: public # Asegúrate que esta clase es correcta para tu MicroK8s Ingress
   rules:
-    - host: "streaming.dmarmijosa.com" # Tu dominio
+    - host: "icecast.dmarmijosa.com" # LO CAMBIAREMOS LUEGO A icecast.dmarmijosa.com
       http:
         paths:
-          - path: / # Todas las peticiones para este dominio
+          - path: /(.*) # Captura cualquier ruta después de /
             pathType: Prefix
             backend:
               service:
-                name: icecast-service # Apunta a tu servicio de Icecast
+                name: icecast-service
                 port:
-                  number: 8000 # Al puerto de tu servicio Icecast
-  # Sección TLS para HTTPS (descomenta y configura si usas SSL)
-  # tls:
-  #   - hosts:
-  #       - "streaming.dmarmijosa.com"
-  #     secretName: icecast-tls-secret # El Secret donde se guardará el certificado
+                  number: 8000
+  tls: # ESTA SECCIÓN DEBE ESTAR DESCOMENTADA Y BIEN CONFIGURADA
+    - hosts:
+        - "icecast.dmarmijosa.com" # LO CAMBIAREMOS LUEGO A icecast.dmarmijosa.com
+      secretName: icecast-tls-secret # Nombre del Secret donde cert-manager guardará el certificado

@@ -15,24 +15,12 @@ spec:
       labels:
         app: icecast
     spec:
-      initContainers:
-        - name: copy-icecast-config
-          image: busybox:1.36 # Una imagen ligera para copiar archivos
-          command: ["sh", "-c", "cp /tmp/config/icecast.xml /etc/icecast.xml"] # Copiamos de /tmp/config a /etc/icecast.xml
-          volumeMounts:
-            # Monta el ConfigMap de forma temporal y solo lectura en /tmp/config
-            - name: icecast-config-volume
-              mountPath: /tmp/config
-            # Este es un volumen temporal para que /etc/icecast.xml sea escribible durante el init
-            - name: icecast-writable-config-temp
-              mountPath: /etc # Montamos /etc para que el initContainer pueda escribir en /etc/icecast.xml
       containers:
         - name: icecast-container
           image: libretime/icecast:latest
           ports:
-            - containerPort: 8000 # Icecast escucha en el puerto 8000 por defecto
+            - containerPort: 8000
           env:
-            # Inyectamos las contraseñas desde el Secret
             - name: ICECAST_SOURCE_PASSWORD
               valueFrom:
                 secretKeyRef:
@@ -49,21 +37,21 @@ spec:
                   name: icecast-secrets
                   key: ICECAST_ADMIN_PASSWORD
           volumeMounts:
-            # Ahora montamos un emptyDir en /etc para que el contenedor principal también tenga /etc/icecast.xml escribible
-            # El initContainer ya puso el archivo aquí.
-            - name: icecast-writable-config-temp
-              mountPath: /etc # Montamos /etc para que el contenedor pueda leer/escribir icecast.xml
-            # Montamos el volumen de logs en la ruta ESPERADA por Icecast dentro del contenedor
+            # Montar el ConfigMap en una ruta que Icecast pueda leer directamente
+            - name: icecast-config-volume
+              mountPath: /etc/icecast2/icecast.xml # Ruta donde Icecast espera su config
+              subPath: icecast.xml # Nombre del archivo dentro del ConfigMap
+              readOnly: true # Es importante que sea read-only si Icecast no necesita modificarlo
+            # Montar el volumen de logs en la ruta ESPERADA por Icecast
             - name: icecast-logs-storage
-              mountPath: /usr/local/icecast/logs # Ruta donde Icecast espera sus logs
+              mountPath: /usr/local/icecast/logs # Asegúrate de que esta es la ruta interna de los logs
+          # Comando para iniciar Icecast, apuntando al archivo de configuración
+          # Esto evita que el entrypoint de la imagen intente modificar /etc/icecast.xml
+          command: ["icecast2", "-c", "/etc/icecast2/icecast.xml"]
       volumes:
         - name: icecast-config-volume
           configMap:
             name: icecast-config
-        # Volumen temporal y escribible para /etc/icecast.xml
-        - name: icecast-writable-config-temp
-          emptyDir: {}
-        # Volumen persistente para logs
         - name: icecast-logs-storage
           persistentVolumeClaim:
             claimName: icecast-logs-pvc
